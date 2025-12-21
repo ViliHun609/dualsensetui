@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# ANSI colors using $'...' so fzf interprets them correctly
+
 RED=$'\033[31m'
 GREEN=$'\033[32m'
 BLUE=$'\033[34m'
@@ -9,20 +9,30 @@ CYAN=$'\033[36m'
 MAGENTA=$'\033[35m'
 RESET=$'\033[0m'
 
+
+DEVICES=$(dualsensectl -l 2>/dev/null | wc -l)
+if [ "$DEVICES" -lt 1 ]; then
+    echo "No DualSense controllers found. Please connect one!"
+    exit 1
+fi
+
+DEVICES=$((DEVICES-1))
+
+echo "${RED}Connected Controller(s): $DEVICES${RESET}"
 while true; do
-    # Main menu options with colors and icons
     OPTIONS=(
+        "${RED}❌ Exit${RESET}"
         "${CYAN}🎮 Turn off Controller${RESET}"
         "${GREEN}🔧 Gaming Preset${RESET}"
-        "${YELLOW}💡 Change LED color${RESET}"
+        "${YELLOW}💡 Configure light bar${RESET}"
         "${MAGENTA}🎚️ Vibration Intensity${RESET}"
         "${BLUE}🔧 Adaptive Triggers${RESET}"
         "${CYAN}ℹ️ Info${RESET}"
-        "${RED}❌ Exit${RESET}"
+        "defaults"
     )
 
-    # Show menu with fzf and ANSI support
-    CHOICE=$(printf "%s\n" "${OPTIONS[@]}" | fzf --ansi --prompt="${CYAN}DualSenseCtl > ${RESET}" --height 15 --border)
+  
+    CHOICE=$(printf "%s\n" "${OPTIONS[@]}" | fzf --ansi --prompt="${CYAN}DualSenseTUI > ${RESET}" --height 13 --border)
 
     case "$CHOICE" in
         *"Turn off Controller"*) 
@@ -31,26 +41,82 @@ while true; do
             ;;
 
         *"Gaming Preset"*)
-            # Example preset: blue light, triggers on, high vibration
-            dualsensectl lightbar 0 0 255
-            dualsensectl adaptive-trigger on
-            dualsensectl vibration high
-            echo -e "${GREEN}Gaming preset applied! 🎮${RESET}"
+            dualsensectl lightbar 0 0 255 100
+            dualsensectl led-brightness 1
+            dualsensectl player-leds 1
+            dualsensectl microphone off
+            dualsensectl microphone-led on
+            dualsensectl speaker internal
+            dualsensectl volume 0
+            dualsensectl trigger both off
+            echo -e "${GREEN}✓ Gaming preset applied! 🎮${RESET}"
             ;;
 
-        *"Change LED color"*)
-            COLORS=(
-                "🔴 Red"
-                "🟢 Green"
-                "🔵 Blue"
-                "⬅️ Back"
+        *"Configure light bar"*)
+            ONOFF=(
+                "${GREEN}✅ ON${RESET}"
+                "${RED}❌ OFF${RESET}"
             )
-            COLOR_CHOICE=$(printf "%s\n" "${COLORS[@]}" | fzf --ansi --prompt="${CYAN}LED color > ${RESET}")
-            case "$COLOR_CHOICE" in
-                "🔴 Red") dualsensectl lightbar 255 0 0 ;;
-                "🟢 Green") dualsensectl lightbar 0 255 0 ;;
-                "🔵 Blue") dualsensectl lightbar 0 0 255 ;;
-                "⬅️ Back") continue ;;
+            LIGHBARSTATE_CHOICE=$(printf "%s\n" "${ONOFF[@]}" | fzf --ansi --prompt="${CYAN}Light bar state > ${RESET}")          
+            
+            case "$LIGHBARSTATE_CHOICE" in
+                *"ON"*)
+                    COLORS=(
+                        "⬅️ Back"
+                        "🔴 Red"
+                        "🟢 Green"
+                        "🔵 Blue"
+                        "🟡 Yellow"
+                        "🟣 Purple"
+                        "🟠 Orange"
+                        "⬜ White"
+                    )
+                    COLOR_CHOICE=$(printf "%s\n" "${COLORS[@]}" | fzf --ansi --prompt="${CYAN}LED color > ${RESET}")
+                    
+                    # Check if user cancelled
+                    if [ -z "$COLOR_CHOICE" ]; then
+                        continue
+                    fi
+                    
+                    case "$COLOR_CHOICE" in
+                        "🔴 Red") 
+                            dualsensectl lightbar 255 0 0
+                            echo -e "${RED}✓ Light bar set to Red${RESET}"
+                            ;;
+                        "🟢 Green") 
+                            dualsensectl lightbar 0 255 0
+                            echo -e "${GREEN}✓ Light bar set to Green${RESET}"
+                            ;;
+                        "🔵 Blue") 
+                            dualsensectl lightbar 0 0 255
+                            echo -e "${BLUE}✓ Light bar set to Blue${RESET}"
+                            ;;
+                        "🟡 Yellow") 
+                            dualsensectl lightbar 255 255 0
+                            echo -e "${YELLOW}✓ Light bar set to Yellow${RESET}"
+                            ;;
+                        "🟣 Purple") 
+                            dualsensectl lightbar 128 0 128
+                            echo -e "${MAGENTA}✓ Light bar set to Purple${RESET}"
+                            ;;
+                        "🟠 Orange") 
+                            dualsensectl lightbar 255 165 0
+                            echo -e "${YELLOW}✓ Light bar set to Orange${RESET}"
+                            ;;
+                        "⬜ White") 
+                            dualsensectl lightbar 255 255 255
+                            echo -e "✓ Light bar set to White"
+                            ;;
+                        "⬅️ Back") 
+                            continue 
+                            ;;
+                    esac
+                    ;;
+                    
+                *"OFF"*)
+                    dualsensectl lightbar off
+                    echo -e "${GREEN}✓ Light bar turned off${RESET}"
+                    ;;
             esac
             ;;
 
