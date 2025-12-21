@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-
 RED=$'\033[31m'
 GREEN=$'\033[32m'
 BLUE=$'\033[34m'
@@ -18,17 +17,18 @@ fi
 
 DEVICES=$((DEVICES-1))
 
-echo "${RED}Connected Controller(s): $DEVICES${RESET}"
 while true; do
+clear
+echo "${RED}Connected Controller(s): $DEVICES${RESET}"
     OPTIONS=(
-        "${RED}❌ Exit${RESET}"
+        "${RED} Exit${RESET}"
         "${CYAN}🎮 Turn off Controller${RESET}"
         "${GREEN}🔧 Gaming Preset${RESET}"
         "${YELLOW}💡 Configure light bar${RESET}"
-        "${MAGENTA}🎚️ Vibration Intensity${RESET}"
-        "${BLUE}🔧 Adaptive Triggers${RESET}"
-        "${CYAN}ℹ️ Info${RESET}"
+        "${BLUE}🔧 Test adaptive triggers${RESET}"
+        "${CYAN}󰋼 Info${RESET}"
         "defaults"
+        "update dualsensectl and dualsensetui"
     )
 
   
@@ -50,15 +50,15 @@ while true; do
             dualsensectl volume 0
             dualsensectl trigger both off
             echo -e "${GREEN}✓ Gaming preset applied! 🎮${RESET}"
-            ;;
-
+            ;;         
+            
         *"Configure light bar"*)
             ONOFF=(
-                "${GREEN}✅ ON${RESET}"
-                "${RED}❌ OFF${RESET}"
+                "${GREEN} ON${RESET}"
+                "${RED} OFF${RESET}"
             )
             LIGHBARSTATE_CHOICE=$(printf "%s\n" "${ONOFF[@]}" | fzf --ansi --prompt="${CYAN}Light bar state > ${RESET}")          
-            
+
             case "$LIGHBARSTATE_CHOICE" in
                 *"ON"*)
                     COLORS=(
@@ -72,47 +72,82 @@ while true; do
                         "⬜ White"
                     )
                     COLOR_CHOICE=$(printf "%s\n" "${COLORS[@]}" | fzf --ansi --prompt="${CYAN}LED color > ${RESET}")
-                    
-                    # Check if user cancelled
+
+
                     if [ -z "$COLOR_CHOICE" ]; then
                         continue
                     fi
-                    
-                    case "$COLOR_CHOICE" in
-                        "🔴 Red") 
-                            dualsensectl lightbar 255 0 0
-                            echo -e "${RED}✓ Light bar set to Red${RESET}"
+
+
+                    if [ "$COLOR_CHOICE" = "⬅️ Back" ]; then
+                        continue
+                    fi
+
+
+                    BRIGHTNESS_OPTIONS=(
+                        "󰌍 Back"
+                        "󱩎 Dim (25%)"
+                        "󱩒 Medium (50%)"
+                        "󱩔 Bright (75%)"
+                        "󱩔 Full (100%)"
+                        "󰌌 Custom..."
+                    )
+                    BRIGHTNESS_CHOICE=$(printf "%s\n" "${BRIGHTNESS_OPTIONS[@]}" | fzf --ansi --prompt="${CYAN}Brightness > ${RESET}")
+
+                    if [ -z "$BRIGHTNESS_CHOICE" ]; then
+                        continue
+                    fi
+
+                    case "$BRIGHTNESS_CHOICE" in
+                        "󱩎 Dim (25%)")    BRIGHTNESS=25 ;;
+                        "󱩒 Medium (50%)") BRIGHTNESS=50 ;;
+                        "󱩔 Bright (75%)") BRIGHTNESS=75 ;;
+                        "󰛨 Full (100%)")  BRIGHTNESS=100 ;;
+                        "󰌌 Custom...")
+                            read -p "Enter brightness (0-100): " CUSTOM_BRIGHTNESS
+                            if [[ "$CUSTOM_BRIGHTNESS" =~ ^[0-9]+$ ]] && [ "$CUSTOM_BRIGHTNESS" -ge 0 ] && [ "$CUSTOM_BRIGHTNESS" -le 100 ]; then
+                                BRIGHTNESS=$CUSTOM_BRIGHTNESS
+                            else
+                                echo -e "${RED}✗ Invalid brightness value${RESET}"
+                                continue
+                            fi
                             ;;
-                        "🟢 Green") 
-                            dualsensectl lightbar 0 255 0
-                            echo -e "${GREEN}✓ Light bar set to Green${RESET}"
-                            ;;
-                        "🔵 Blue") 
-                            dualsensectl lightbar 0 0 255
-                            echo -e "${BLUE}✓ Light bar set to Blue${RESET}"
-                            ;;
-                        "🟡 Yellow") 
-                            dualsensectl lightbar 255 255 0
-                            echo -e "${YELLOW}✓ Light bar set to Yellow${RESET}"
-                            ;;
-                        "🟣 Purple") 
-                            dualsensectl lightbar 128 0 128
-                            echo -e "${MAGENTA}✓ Light bar set to Purple${RESET}"
-                            ;;
-                        "🟠 Orange") 
-                            dualsensectl lightbar 255 165 0
-                            echo -e "${YELLOW}✓ Light bar set to Orange${RESET}"
-                            ;;
-                        "⬜ White") 
-                            dualsensectl lightbar 255 255 255
-                            echo -e "✓ Light bar set to White"
-                            ;;
-                        "⬅️ Back") 
+                        "󰌍 Back") 
                             continue 
                             ;;
                     esac
+
+                    case "$COLOR_CHOICE" in
+                        "🔴 Red") 
+                            dualsensectl lightbar 255 0 0 $BRIGHTNESS
+                            echo -e "${RED}✓ Light bar set to Red at ${BRIGHTNESS_CHOICE}${RESET}"
+                            ;;
+                        "🟢 Green") 
+                            dualsensectl lightbar 0 255 0 $BRIGHTNESS
+                            echo -e "${GREEN}✓ Light bar set to Green at ${BRIGHTNESS_CHOICE}${RESET}"
+                            ;;
+                        "🔵 Blue") 
+                            dualsensectl lightbar 0 0 255 $BRIGHTNESS
+                            echo -e "${BLUE}✓ Light bar set to Blue at ${BRIGHTNESS_CHOICE}${RESET}"
+                            ;;
+                        "🟡 Yellow") 
+                            dualsensectl lightbar 255 255 0 $BRIGHTNESS
+                            echo -e "${YELLOW}✓ Light bar set to Yellow at ${BRIGHTNESS_CHOICE}${RESET}"
+                            ;;
+                        "🟣 Purple") 
+                            dualsensectl lightbar 128 0 128 $BRIGHTNESS
+                            echo -e "${MAGENTA}✓ Light bar set to Purple at ${BRIGHTNESS_CHOICE}${RESET}"
+                            ;;
+                        "🟠 Orange") 
+                            dualsensectl lightbar 255 165 0 $BRIGHTNESS
+                            echo -e "${YELLOW}✓ Light bar set to Orange at ${BRIGHTNESS_CHOICE}${RESET}"
+                            ;;
+                        "⬜ White") 
+                            dualsensectl lightbar 255 255 255 $BRIGHTNESS
+                            echo -e "✓ Light bar set to White at ${BRIGHTNESS_CHOICE}"
+                            ;;
+                    esac
                     ;;
-                    
                 *"OFF"*)
                     dualsensectl lightbar off
                     echo -e "${GREEN}✓ Light bar turned off${RESET}"
@@ -140,12 +175,55 @@ while true; do
             esac
             ;;
 
-        *"Info"*) dualsensectl info ;;
+        *"Info"*)
+        BATTERY_LEVEL=$(dualsensectl battery)
+        echo "$BATTERY_LEVEL"  
 
-        *"Exit"*) echo -e "${MAGENTA}Goodbye! 🎮${RESET}"; exit 0 ;;
+
+        BATTERY_LEVEL=$(echo "$BATTERY_LEVEL" | awk '{print substr($0,1,3)}')
+        BATTERY_LEVEL=$(echo "$BATTERY_LEVEL" | tr -d ' ')
+        echo "Extracted: $BATTERY_LEVEL"
+
+        dualsensectl info | awk '
+        {
+          lines[NR] = $0
+          len = length($0)
+          if (len > max) max = len
+        }
+        END {
+          printf "┌"
+          for (i = 0; i < max + 2; i++) printf "─"
+          print "┐"
+
+          for (i = 1; i <= NR; i++)
+            printf "│ %-*s │\n", max, lines[i]
+
+          printf "└"
+          for (i = 0; i < max + 2; i++) printf "─"
+          print "┘"
+        }'
+
+        if [[ -n "$BATTERY_LEVEL" && "$BATTERY_LEVEL" -eq 100 ]]; then
+            echo "Battery: $BATTERY_LEVEL%  "
+            echo -e "${GREEN}Controller is fully charged!"
+        elif [[ -n "Battery: $BATTERY_LEVEL" && "$BATTERY_LEVEL" -le 20 ]]; then
+            echo "${RED}Battery: $BATTERY_LEVEL%  "
+            echo "${RED}Controller Charge is low!"
+        else
+            echo "${YELLOW}Battery: $BATTERY_LEVEL%  "
+        fi
+
+        ;;
+
+        *"Exit"*)
+            clear
+            echo -e "${MAGENTA}Goodbye! 🎮${RESET}"
+            exit 0
+            ;;
 
         *) echo "No option selected or unknown choice." ;;
     esac
 
-    read -rp "Press enter to continue..."
+    read -rp "${RESET}Press enter to continue..."
+
 done

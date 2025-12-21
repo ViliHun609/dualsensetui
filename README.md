@@ -10,7 +10,15 @@
 - Display other information of the controller ❌
 - 
 
+## Installation
 
+- Run this command:
+
+  ```
+  
+  ```
+
+  
 
 ## Dependencies
 
