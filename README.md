@@ -18,7 +18,7 @@
 
 
 
-# The program relies on @nowrep 's dualsensectl which is the core of this program. 
+## The program relies on [@nowrep](https://github.com/nowrep) 's dualsensectl which is the core of this program. 
 
 ## Dualsensectl repository: https://github.com/nowrep/dualsensectl
 
