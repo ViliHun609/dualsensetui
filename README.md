@@ -51,6 +51,7 @@ At the current state it does not install any dependencies, which means how need 
   - hidapi
   - system-libs
 
+- fzf
 
 
 
