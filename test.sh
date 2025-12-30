@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+VERSION="1.0.0"
+REPO_URL="https://raw.githubusercontent.com/ViliHun609/dualsensetui/master/test.sh"
+INSTALL_PATH="/usr/local/bin/dualsensetui"
+
+
 RED=$'\033[31m'
 GREEN=$'\033[32m'
 BLUE=$'\033[34m'
@@ -194,7 +199,7 @@ echo "${RED}Connected Controller(s): $DEVICES${RESET}"
 
         *"Test adaptive triggers"*)
             dualsensectl trigger both weapon 2 6 8
-            echo "Press down any trigger and feel the "
+            echo "Press down any trigger and feel the adaptive triggers"
 
             read -p "${RESET}Press enter to Remove trigger effects and return to the main page!"
             dualsensectl trigger both off
@@ -206,7 +211,7 @@ echo "${RED}Connected Controller(s): $DEVICES${RESET}"
 
 
         BATTERY_LEVEL=$(echo "$BATTERY_LEVEL" | awk '{print substr($0,1,3)}')
-        BATTERY_LEVEL=$(echo "$BATTERY_LEVEL" | tr -d ' ')
+        BATTERY_LEVEL=$(dualsensectl battery | grep -o '[0-9]\{1,3\}' | head -1)
         echo "Extracted: $BATTERY_LEVEL"
 
         dualsensectl info | awk '
@@ -233,7 +238,7 @@ echo "${RED}Connected Controller(s): $DEVICES${RESET}"
             echo -e "${GREEN}Controller is fully charged!"
         elif [[ -n "Battery: $BATTERY_LEVEL" && "$BATTERY_LEVEL" -le 20 ]]; then
             echo "${RED}Battery: $BATTERY_LEVEL%  "
-            echo "${RED}Controller Charge is low!"
+            echo "${RED}Controller battery charge is low!"
         else
             echo "${YELLOW}Battery: $BATTERY_LEVEL%  "
         fi
