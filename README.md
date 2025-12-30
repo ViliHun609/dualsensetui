@@ -1,9 +1,11 @@
 # dualsensetui
  A REALLY simple Linux TUI for dualsensectl with Hyprland implementations.
 
-Preview
+### Preview:
 
 ![preview](./preview.png)
+
+*Version 0.5.1*
 
 (it's kinda vibe coded but i think it still can be useful for other so i publish it.)
 
