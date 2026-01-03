@@ -15,7 +15,8 @@ RESET=$'\033[0m'
 #RESET=$'\033[36m'
 WHITE=$'\033[37m'
 
-# Parse command line arguments for battery-only mode
+
+
 if [ "$1" = "-b" ]; then
     BATTERY_LEVEL=$(dualsensectl battery | grep -o '[0-9]\{1,3\}' | head -1)
     
@@ -48,14 +49,14 @@ clear
 echo "${WHITE}DualSenseTUI ${VERSION}"
 echo "${RED}Connected Controller(s): $DEVICES${RESET}"
     OPTIONS=(
-        "${RED} Exit${RESET}"
-        "${CYAN} Turn off Controller${RESET}"
+        "${RED} Exit${RESET}"
+        "${CYAN} Turn off Controller${RESET}"
         "${GREEN}󰮂 Gaming Preset${RESET}"
         "${YELLOW}󰌵 Configure light bar${RESET}"
         "${BLUE}󰖷 Test adaptive triggers${RESET}"
         "${CYAN}󰋼 Info${RESET}"
         "${RED}󰝳 Defaults"
-        "${GREEN} Update dualsensectl and dualsensetui"
+        "${GREEN} Update dualsensectl and dualsensetui"
     )
 
   
@@ -114,8 +115,8 @@ echo "${RED}Connected Controller(s): $DEVICES${RESET}"
             
         *"Configure light bar"*)
             ONOFF=(
-                "${GREEN} ON${RESET}"
-                "${RED} OFF${RESET}"
+                "${GREEN} ON${RESET}"
+                "${RED} OFF${RESET}"
             )
             LIGHBARSTATE_CHOICE=$(printf "%s\n" "${ONOFF[@]}" | fzf --ansi --prompt="${CYAN}Light bar state > ${RESET}")          
 
@@ -253,13 +254,13 @@ echo "${RED}Connected Controller(s): $DEVICES${RESET}"
         }'
 
         if [[ -n "$BATTERY_LEVEL" && "$BATTERY_LEVEL" -eq 100 ]]; then
-            echo "Battery: $BATTERY_LEVEL%  "
+            echo "Battery: $BATTERY_LEVEL%  "
             echo -e "${GREEN}Controller is fully charged!"
         elif [[ -n "Battery: $BATTERY_LEVEL" && "$BATTERY_LEVEL" -le 20 ]]; then
-            echo "${RED}Battery: $BATTERY_LEVEL%  "
+            echo "${RED}Battery: $BATTERY_LEVEL%  "
             echo "${RED}Controller battery charge is low!"
         else
-            echo "${YELLOW}Battery: $BATTERY_LEVEL%  "
+            echo "${YELLOW}Battery: $BATTERY_LEVEL%  "
         fi
 
         read -rp "${RESET}Press enter to continue..."
@@ -274,4 +275,6 @@ echo "${RED}Connected Controller(s): $DEVICES${RESET}"
 
         *) echo "No option selected or unknown choice." ;;
     esac
+
+
 done

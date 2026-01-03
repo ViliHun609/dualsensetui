@@ -1,25 +1,25 @@
 # dualsensetui
- A REALLY simple Linux TUI for dualsensectl with Hyprland implementations.
+ A REALLY simple Linux TUI for dualsensectl with Hyprland and Waybar implementations.
 
 ### Preview:
 
 ![preview](./preview.png)
 
-*Version 0.5.1*
+*Version 0.6*
 
-(it's kinda vibe coded but i think it still can be useful for other so i publish it.)
+
 
 ## Things that dualsensetui can do at the moment:
 
 - Turn off controller ✅
-- Display battery level of your controller ❌
+- Display battery level of your controller ✅
 - Display other information of the controller ✅
 
 ## Supported Distros
 
 | Distro     | Supported                                     |
 | ---------- | --------------------------------------------- |
-| Arch Linux | ✅/❌ (maybe ATM, it works on omarchy for sure) |
+| Arch Linux | ✅/❌ (maybe ATM, it works on Omarchy for sure) |
 | Ubuntu     | ❌                                             |
 | Fedora     | ❌                                             |
 | Debian     | ❌                                             |
@@ -30,11 +30,11 @@
 
 | Milestone            | Description                                                  | Status      |
 | :------------------- | :----------------------------------------------------------- | :---------- |
-| Waybar module        | A simple waybar module to open the TUI                       | Planned     |
+| Waybar module        | A simple waybar module to open the TUI                       | In progress |
 | Installer file       | An Executable file that could install dualsensetui with all required packages. | In progress |
 | Updater              | Built in UI option that can scan for newer versions of dualsenseTUI | Planned     |
 | Other Distro support | Fully support other distributions like Ubuntu or Fedora.     | Planned     |
-| On screen pop-up     | A keybind that will open the TUI in a window in the right upper corner of the screen, something like this ![](https://github.com/Seyloria/sinkswitch/raw/main/example.jpg) | Planned     |
+| On screen pop-up     | A keybind that will open the TUI in a window in the right upper corner of the screen, something like this ![](https://github.com/Seyloria/sinkswitch/raw/main/example.jpg) | DONE        |
 
 
 
@@ -44,9 +44,28 @@
 
 Run this command to install the latest version of dualsenseTUI.
 
-At the current state it does not install any dependencies, which means how need them before the install.
+At the current state it does not install any dependencies, which means how them before the install.
 
-`curl -s https://raw.githubusercontent.com/ViliHun609/dualsensetui/master/test.sh | sudo tee /usr/local/bin/dualsensetui > /dev/null && sudo chmod +x /usr/local/bin/dualsensetui`
+`curl -s https://raw.githubusercontent.com/ViliHun609/dualsensetui/master/dualsensetui.sh | sudo tee /usr/local/bin/dualsensetui > /dev/null && sudo chmod +x /usr/local/bin/dualsensetui`
+
+
+
+## Additional Setup Hyprland + Waybar
+
+### **Hyprland** Pop up window
+
+This is a little key bind that will open the TUI in the special workspace in the middle, focused on it.
+
+Just copy and paste this in your hyprland config.
+
+If you are using Omarchy press **SUPER + ALT + SPACE --> Setup --> Keybindings** and place it anywhere. 
+
+```
+# DualsenseTUI
+bindd = SUPER SHIFT, L, Dualsensetui, exec, [workspace special:dualsensetui; size 500 300] ghostty -e ~/Documents/Programing/dualsensetui/dualsensetui.sh
+```
+
+## Waybar button
 
 
 
