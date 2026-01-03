@@ -46,7 +46,9 @@ Run this command to install the latest version of dualsenseTUI.
 
 At the current state it does not install any dependencies, which means how them before the install.
 
-`curl -s https://raw.githubusercontent.com/ViliHun609/dualsensetui/master/dualsensetui.sh | sudo tee /usr/local/bin/dualsensetui > /dev/null && sudo chmod +x /usr/local/bin/dualsensetui`
+```
+curl -s https://raw.githubusercontent.com/ViliHun609/dualsensetui/master/dualsensetui.sh | sudo tee /usr/local/bin/dualsensetui > /dev/null && sudo chmod +x /usr/local/bin/dualsensetui
+```
 
 
 
@@ -62,12 +64,42 @@ If you are using Omarchy press **SUPER + ALT + SPACE --> Setup --> Keybindings**
 
 ```
 # DualsenseTUI
-bindd = SUPER SHIFT, L, Dualsensetui, exec, [workspace special:dualsensetui; size 500 300] ghostty -e ~/Documents/Programing/dualsensetui/dualsensetui.sh
+bindd = SUPER SHIFT, L, Dualsensetui, exec, [workspace special:dualsensetui; size 500 300] ghostty -e dualsensetui
 ```
 
-## Waybar button
+### Waybar module
 
+*Note: this will only appear if a DualSense controller is connected*
 
+To add a waybar module you need to do the following:
+
+1. add `"custom/dualsensetui"` to the modules list
+
+   example: 
+
+   ```
+     "modules-right": [
+       "group/tray-expander",
+       "custom/dualsensetui", // <-- Add this
+       "group/ctl",
+       "clock" 
+     ],
+   ```
+
+   *In my config I added it to the group/ctl but feel free to use it anywhere*
+
+2. Define the custom module
+
+   ```
+   "custom/dualsensetui": {
+     "format": "  {text}",
+     "on-click": "",
+     "interval": 120, 
+     "exec": "dualsensetui -b"
+   }
+   ```
+
+3. Restart waybar and it should appear with a playstation icon and a battery level next to it!
 
 ## Dependencies
 
