@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 VERSION="0.6"
-REPO_URL="https://raw.githubusercontent.com/ViliHun609/dualsensetui/master/dualsensetui.sh"
-INSTALL_PATH="/usr/local/bin/dualsensetui"
 
 
 RED=$'\033[31m'

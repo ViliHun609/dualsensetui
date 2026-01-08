@@ -14,10 +14,6 @@ RESET=$'\033[0m'
 #RESET=$'\033[36m'
 WHITE=$'\033[37m'
 
-if [ "$EUID" -ne 0 ]; then 
-    echo -e "${RED}Please run as root (sudo ./install.sh)"
-    exit 1
-fi
 echo "${Green} Installing DualSenseTUI"
 
 # Check if dualsensectl is installed
